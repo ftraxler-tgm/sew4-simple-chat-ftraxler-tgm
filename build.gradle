@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+    id 'eclipse'
+    id 'jacoco'
+}
+
+task client(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    main = 'simplechat.client.SimpleChat'
+}
+
+task server(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    main = 'simplechat.server.SimpleChat'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    implementation 'com.google.guava:guava:26.0-jre'
+    testImplementation 'junit:junit:4.12'
+}
+
+jacoco {
+    toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+    }
+}
+
+
+

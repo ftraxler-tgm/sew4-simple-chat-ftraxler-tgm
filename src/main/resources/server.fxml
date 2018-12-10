@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+<GridPane fx:controller="simplechat.server.Controller"
+          xmlns:fx="http://javafx.com/fxml" alignment="TOP_LEFT" hgap="10" vgap="10">
+
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+
+    <Text fx:id="chatText"
+          text="Chat"
+          GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <Text fx:id="clientText"
+          text="Clients"
+          GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+    <TextArea fx:id="textArea"
+              text="Welcome to Simple Chat!"
+              editable="false"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="1"
+              GridPane.columnSpan="3"/>
+
+    <ListView fx:id="listView"
+              GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.columnSpan="1"/>
+
+    <TextField fx:id="textField"
+               text=""
+               editable="true"
+               GridPane.columnIndex="0"
+               GridPane.rowIndex="2"/>
+
+    <HBox spacing="10" alignment="bottom_right"
+          GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <Button text="Send"
+                onAction="#handleMessageButtonAction"/>
+    </HBox>
+
+    <Button text="Remove" GridPane.columnIndex="3" GridPane.rowIndex="2" GridPane.halignment="RIGHT"
+            onAction="#handleRemoveButtonAction"/>
+
+    <Text fx:id="actionTarget"
+          GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+
+</GridPane>

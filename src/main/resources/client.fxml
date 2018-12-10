@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+<GridPane fx:controller="simplechat.client.Controller"
+          xmlns:fx="http://javafx.com/fxml" alignment="TOP_LEFT" hgap="10" vgap="10">
+
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+
+    <TextArea fx:id="textArea"
+            text="Welcome to Simple Chat!"
+              prefHeight="800"
+              prefWidth="1200"
+              editable="false"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="0"
+              GridPane.columnSpan="2"/>
+
+    <TextField fx:id="textField"
+               text=""
+               editable="true"
+               GridPane.columnIndex="0"
+               GridPane.rowIndex="1"/>
+
+    <HBox spacing="10" alignment="bottom_right"
+          GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <Button text="Send"
+                onAction="#handleMessageButtonAction"/>
+    </HBox>
+
+    <Text fx:id="actionTarget"
+          GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+</GridPane>
