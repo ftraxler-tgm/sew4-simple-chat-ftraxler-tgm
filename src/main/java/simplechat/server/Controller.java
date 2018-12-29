@@ -43,6 +43,7 @@ public class Controller {
     }
 
     public void stop() {
+        this.simpleChat.stop();
     }
 
     public void setSimpleChat(SimpleChat simpleChat) {

@@ -65,6 +65,17 @@ public class SimpleChatClient extends Thread {
      * the {@link #shutdown()} method will be called.
      */
     public void run() {
+        try {
+            this.listening=true;
+            this.socket=new Socket(host,port);
+            this.socket.setSoTimeout(2000);
+            this.socket.setKeepAlive(true);
+            while(listening){
+            }
+        } catch (IOException e) {
+            SimpleChat.clientLogger.log(SEVERE,""+e.getMessage());
+        }
+
     }
 
     /**
@@ -78,7 +89,12 @@ public class SimpleChatClient extends Thread {
      * If there is now Command (no "!" as first character),
      * the message will be passed to {@link simplechat.client.SimpleChat#incomingMessage(String)}
      */
+
     private void received() {
+        if(isListening()){
+
+        }
+
     }
 
     /**
@@ -87,6 +103,8 @@ public class SimpleChatClient extends Thread {
      * @param message Public message for server intercommunication
      */
     public void send(String message) {
+        out.print(message);
+
     }
 
     /**
@@ -96,6 +114,7 @@ public class SimpleChatClient extends Thread {
      * @param chatName Name of receiver
      */
     public void send(String message, String chatName) {
+
     }
 
     /**

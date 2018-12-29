@@ -58,7 +58,21 @@ public class SimpleChatServer extends Thread {
      * to the ExecutorService for immediate concurrent action.
      */
     public void run() {
-        SimpleChat.serverLogger.log(INFO, "... starting Thread ...");
+        try{
+            SimpleChat.serverLogger.log(INFO, "... starting Thread ...");
+            this.serverSocket = new ServerSocket(port,backlog);
+            this.listening=true;
+            while(listening){
+                SimpleChat.serverLogger.log(INFO,"Listening...");
+                workerList.put(new ClientWorker(this.serverSocket.accept(),this),"Test");
+            }
+
+        }
+        catch(IOException ioE){
+            SimpleChat.serverLogger.log(INFO,""+ioE.getMessage());
+        }
+
+
     }
 
     /**
@@ -122,6 +136,14 @@ public class SimpleChatServer extends Thread {
      * active ClientWorker Threads.
      */
     public void shutdown() {
+        try{
+            this.listening=false;
+            this.serverSocket.close();
+        }
+        catch (IOException ioE){
+            SimpleChat.serverLogger.log(INFO,""+ioE.getMessage());
+        }
+
     }
 }
 

@@ -40,7 +40,7 @@ public class SimpleChat {
         clientLogger.setLevel(FINE);
         clientLogger.setUseParentHandlers(false);
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(SEVERE);
+        ch.setLevel(ALL);
         clientLogger.addHandler(ch);
 
         CommandLineParser parser = new DefaultParser();
@@ -86,6 +86,7 @@ public class SimpleChat {
      * @param port port for connection
      */
     public SimpleChat(String name, String host, Integer port) {
+
         client = new SimpleChatClient(name, host, port, this);
     }
 
@@ -101,19 +102,22 @@ public class SimpleChat {
      */
     public void listen() {
         clientLogger.log(INFO, "Initiating SimpleChatClient ...");
+        client.start();
     }
 
     /**
      * Gracefully shutdown of client Thread calling {@link SimpleChatClient#shutdown()}
      */
     public void stop() {
+        this.client.shutdown();
+
     }
 
     /**
      * @return checks if client Thread is still alive
      */
     public boolean isConnected() {
-        return false;
+        return client.isAlive();
     }
 
     /**
@@ -123,6 +127,7 @@ public class SimpleChat {
      */
     public void sendMessage(String message) {
         clientLogger.log(INFO, "UI gave me this message: " + message);
+        this.client.send(message);
     }
 
     /**
@@ -133,6 +138,7 @@ public class SimpleChat {
      */
     public void sendMessage(String message, String chatName) {
         clientLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
+        this.client.send(message,chatName);
     }
 
     /**
@@ -142,6 +148,9 @@ public class SimpleChat {
      * @param message Message sent by Server
      */
     public void incomingMessage(String message) {
+        if(controller != null){
+            this.controller.updateTextAreaWithText(message);
+        }
     }
 
 }

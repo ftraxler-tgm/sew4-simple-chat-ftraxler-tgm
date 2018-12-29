@@ -47,7 +47,7 @@ public class SimpleChat {
         serverLogger.setLevel(FINE);
         serverLogger.setUseParentHandlers(false);
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(SEVERE);
+        ch.setLevel(ALL);
         serverLogger.addHandler(ch);
 
         CommandLineParser parser = new DefaultParser();
@@ -107,12 +107,14 @@ public class SimpleChat {
      */
     public void listen() {
         serverLogger.log(INFO, "Initiating SimpleChatServer ...");
+        this.server.start();
     }
 
     /**
      * Gracefully shutdown of server Thread calling {@link SimpleChatServer#shutdown()}
      */
     public void stop() {
+        this.server.shutdown();
     }
 
     /**
