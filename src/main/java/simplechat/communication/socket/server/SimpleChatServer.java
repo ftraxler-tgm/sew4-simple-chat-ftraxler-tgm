@@ -64,7 +64,9 @@ public class SimpleChatServer extends Thread {
             this.listening=true;
             while(listening){
                 SimpleChat.serverLogger.log(INFO,"Listening...");
-                workerList.put(new ClientWorker(this.serverSocket.accept(),this),"Test");
+                ClientWorker c = new ClientWorker(this.serverSocket.accept(),this);
+                executorService.submit(c);
+                workerList.put(c,"Client"+workerList.size());
             }
 
         }
@@ -82,6 +84,7 @@ public class SimpleChatServer extends Thread {
      * @param sender       {@link ClientWorker} which received the message
      */
     public void received(String plainMessage, ClientWorker sender) {
+        sender.send(plainMessage);
     }
 
     /**
@@ -139,6 +142,9 @@ public class SimpleChatServer extends Thread {
         try{
             this.listening=false;
             this.serverSocket.close();
+            for(ClientWorker o: workerList.keySet())
+                o.shutdown();
+
         }
         catch (IOException ioE){
             SimpleChat.serverLogger.log(INFO,""+ioE.getMessage());
@@ -196,5 +202,6 @@ class ClientWorker implements Runnable {
      * @param message MessageText for Client
      */
     void send(String message) {
+        out.write(message);
     }
 }
