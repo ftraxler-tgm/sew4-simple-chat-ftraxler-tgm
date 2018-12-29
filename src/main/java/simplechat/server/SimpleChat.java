@@ -121,7 +121,7 @@ public class SimpleChat {
      * @return checks if server Thread is still alive
      */
     public boolean isConnected() {
-        return false;
+        return this.server.isAlive();
     }
 
     /**
@@ -130,7 +130,8 @@ public class SimpleChat {
      * @param message plain message
      */
     public void sendMessage(String message) {
-        serverLogger.log(INFO, "UI gave me this message: " + message);
+        if(isConnected())
+         serverLogger.log(INFO, "UI gave me this message: " + message);
     }
 
     /**
@@ -140,7 +141,8 @@ public class SimpleChat {
      * @param chatName receiver
      */
     public void sendMessage(String message, String chatName) {
-        serverLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
+        if(isConnected())
+         serverLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
     }
 
     /**
@@ -149,6 +151,7 @@ public class SimpleChat {
      * @param message Message sent by Client
      */
     public void incomingMessage(String message) {
+
     }
 
     /**

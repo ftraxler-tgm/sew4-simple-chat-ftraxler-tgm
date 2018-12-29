@@ -71,6 +71,7 @@ public class SimpleChatClient extends Thread {
             this.socket.setSoTimeout(2000);
             this.socket.setKeepAlive(true);
             while(listening){
+
             }
         } catch (IOException e) {
             SimpleChat.clientLogger.log(SEVERE,""+e.getMessage());
@@ -124,6 +125,8 @@ public class SimpleChatClient extends Thread {
      * Finally we are closing all open resources.
      */
     public void shutdown() {
+        this.listening=false;
+
         SimpleChat.clientLogger.log(INFO, "Shutting down Client ... listening=" + listening);
     }
 

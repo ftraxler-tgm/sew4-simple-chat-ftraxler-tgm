@@ -39,7 +39,7 @@ public class Controller {
     public void initialize() {
 
         simpleChat = new SimpleChat("ftraxler","localhost",5050);
-        this.scheduledExecutorService.schedule(clearText,50,TimeUnit.MILLISECONDS);
+        this.scheduledExecutorService.submit(clearText);
     }
 
     public void stop() {

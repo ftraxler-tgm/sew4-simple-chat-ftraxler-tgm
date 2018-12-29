@@ -40,6 +40,8 @@ public class Controller {
     }
 
     public void initialize() {
+        this.simpleChat = new SimpleChat("localhost",5050);
+        this.scheduledExecutorService.submit(clearText);
     }
 
     public void stop() {
@@ -47,15 +49,27 @@ public class Controller {
     }
 
     public void setSimpleChat(SimpleChat simpleChat) {
+        this.simpleChat = simpleChat;
     }
 
     public void updateTextAreaWithText(String text) {
+        this.textArea.setText(text);
     }
 
     public void addUser(String user) {
+        ObservableList<String> items=this.listView.getItems();
+        items.add(user);
+        this.listView.setItems(items);
+
     }
 
     public void removeUser(String user) {
+        ObservableList<String> items=this.listView.getItems();
+        for(int i=0;i<items.size();i++){
+            if(items.get(i).equals("user")){
+                items.remove(i);
+            }
+        }
     }
 
     Runnable clearText = () -> {

@@ -67,6 +67,7 @@ public class SimpleChatServer extends Thread {
                 ClientWorker c = new ClientWorker(this.serverSocket.accept(),this);
                 executorService.submit(c);
                 workerList.put(c,"Client"+workerList.size());
+                SimpleChat.serverLogger.log(INFO,"Worker added");
             }
 
         }
@@ -130,6 +131,7 @@ public class SimpleChatServer extends Thread {
      * @param chatName Client name which should be removed
      */
     public void removeClient(String chatName) {
+
     }
 
     /**
@@ -144,7 +146,7 @@ public class SimpleChatServer extends Thread {
             this.serverSocket.close();
             for(ClientWorker o: workerList.keySet())
                 o.shutdown();
-
+            SimpleChat.serverLogger.log(INFO,"Everthing shutdowned");
         }
         catch (IOException ioE){
             SimpleChat.serverLogger.log(INFO,""+ioE.getMessage());
@@ -173,6 +175,9 @@ class ClientWorker implements Runnable {
      * @throws IOException will be throwed if the init of Input- or OutputStream fails
      */
     ClientWorker(Socket client, SimpleChatServer callback) throws IOException {
+        SimpleChat.serverLogger.log(INFO,"ClientWorker-Thread init");
+        this.client=client;
+        this.callback=callback;
     }
 
     /**
