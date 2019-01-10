@@ -23,9 +23,9 @@ import static java.util.logging.Level.*;
  */
 public class SimpleChatClient extends Thread {
 
-    private String name = "Client";
-    private String host = "localhost";
-    private Integer port = 5050;
+    private String name = null;
+    private String host = null;
+    private Integer port = null;
 
     private InetSocketAddress socketAddress;
     private Socket socket = null;
@@ -49,9 +49,18 @@ public class SimpleChatClient extends Thread {
         if (name != null) this.name = name;
         if (host != null) this.host = host;
         if (port != null) this.port = port;
-        this.client = client;
         SimpleChat.clientLogger.log(INFO, "Init: host=" + this.host + " port="
                 + this.port + " chatName=" + this.name);
+
+
+
+            this.client = client;
+            this.socketAddress = new InetSocketAddress(host,port);
+
+
+
+
+
     }
 
     /**
@@ -67,10 +76,16 @@ public class SimpleChatClient extends Thread {
     public void run() {
         try {
             this.listening=true;
-            this.socket=new Socket(host,port);
-            this.socket.setSoTimeout(2000);
+            this.socket=new Socket();
+            this.socket.connect(this.socketAddress, 2000);
+
             this.socket.setKeepAlive(true);
-            while(listening){
+            SimpleChat.clientLogger.log(INFO,"Socket Listening....");
+            this.out = new PrintWriter(socket.getOutputStream(),true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            while((currentMessage = in.readLine() )!= null && listening){
+                SimpleChat.clientLogger.log(INFO,"The Client got the message "+this.currentMessage);
+                received();
 
             }
         } catch (IOException e) {
@@ -94,6 +109,33 @@ public class SimpleChatClient extends Thread {
     private void received() {
         if(isListening()){
 
+            SimpleChat.clientLogger.log(INFO,"Command YES/NO"+currentMessage.startsWith("!"));
+
+            if(currentMessage.startsWith("!")){
+                SimpleChat.clientLogger.log(INFO,"Command has been send");
+                String[] texts = currentMessage.substring(1).split(" ",2);
+                SimpleChat.clientLogger.log(INFO,"Command: "+texts[0]);
+                MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
+                switch (cmd){
+                    case EXIT:
+                        SimpleChat.clientLogger.log(INFO,"Client is shuting down");
+                        this.shutdown();
+
+                        break;
+                    case PRIVATE:
+                        break;
+                    case CHATNAME:
+
+                        //TODO
+                        break;
+                }
+
+
+            }else{
+                SimpleChat.clientLogger.log(INFO,"The Client got the message "+this.currentMessage);
+                this.client.incomingMessage(this.currentMessage);
+            }
+
         }
 
     }
@@ -104,7 +146,7 @@ public class SimpleChatClient extends Thread {
      * @param message Public message for server intercommunication
      */
     public void send(String message) {
-        out.print(message);
+            out.println(message);
 
     }
 
@@ -116,6 +158,7 @@ public class SimpleChatClient extends Thread {
      */
     public void send(String message, String chatName) {
 
+
     }
 
     /**
@@ -126,6 +169,15 @@ public class SimpleChatClient extends Thread {
      */
     public void shutdown() {
         this.listening=false;
+
+        try {
+            this.socket.close();
+            this.in.close();
+            this.out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.client.stop();
 
         SimpleChat.clientLogger.log(INFO, "Shutting down Client ... listening=" + listening);
     }

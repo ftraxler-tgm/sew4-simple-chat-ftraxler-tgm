@@ -132,6 +132,9 @@ public class SimpleChat {
     public void sendMessage(String message) {
         if(isConnected())
          serverLogger.log(INFO, "UI gave me this message: " + message);
+         this.server.send(message);
+         this.sentMessages.add(message);
+         this.controller.updateTextAreaWithText(message);
     }
 
     /**
@@ -141,8 +144,10 @@ public class SimpleChat {
      * @param chatName receiver
      */
     public void sendMessage(String message, String chatName) {
-        if(isConnected())
-         serverLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
+        if (isConnected())
+            //serverLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
+        this.server.send(message, chatName);
+        this.sentMessages.add(message);
     }
 
     /**
@@ -151,6 +156,8 @@ public class SimpleChat {
      * @param message Message sent by Client
      */
     public void incomingMessage(String message) {
+        this.receivedMessages.add(message);
+        this.controller.updateTextAreaWithText(String.join("\n",this.receivedMessages));
 
     }
 
@@ -171,7 +178,8 @@ public class SimpleChat {
      * or an adapted new name (e.g. Franz#1)
      */
     public synchronized String addClient(String chatName) {
-        String name = chatName.equals("") ? "Client" : chatName;
+        String name = chatName;
+        this.controller.addUser(chatName);
         return name;
     }
 
@@ -184,6 +192,10 @@ public class SimpleChat {
      * or an adapted new name (e.g. Franz#1)
      */
     public synchronized String renameClient(String oldChatName, String newChatName) {
+        if(users.remove(oldChatName)){
+            serverLogger.log(INFO, "Renaming Client...");
+           return this.addClient(newChatName);
+        }
         return null;
     }
 
@@ -195,6 +207,8 @@ public class SimpleChat {
      * @param chatName Client which will be removed from Userlist
      */
     public void removeClient(String chatName) {
+        serverLogger.log(INFO, "Client ("+chatName+") removed...");
+        users.remove(chatName);
     }
 
     /**
@@ -204,6 +218,8 @@ public class SimpleChat {
      * @param chatName Client which will be informed of shutdown
      */
     public void shutdownClient(String chatName) {
+        server.removeClient(chatName);
+        removeClient(chatName);
     }
 
     /**

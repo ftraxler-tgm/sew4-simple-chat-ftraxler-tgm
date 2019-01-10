@@ -51,10 +51,10 @@ public class SimpleChat {
         options.addOption("v", "verbose", false, "explain what is being done");
 
         CommandLine line = null;
-        String host = null;
-        String chatName = null;
-        Integer port = null;
-        try {
+        String host = "localhost";
+        String chatName = "Client";
+        Integer port = 5050;
+       /** try {
             line = parser.parse(options, args);
             host = line.getOptionValue("h");
             chatName = line.getOptionValue("n");
@@ -68,7 +68,9 @@ public class SimpleChat {
         } catch (ParseException e) {
             clientLogger.log(SEVERE, e.toString());
             System.exit(1);
-        }
+        }*/
+        clientLogger.log(INFO, "Parameters set by user: " +
+                "host=" + host + " port=" + port + " chatName=" + chatName);
 
         SimpleChat simpleChat = new SimpleChat(chatName, host, port);
         simpleChat.listen();
@@ -109,7 +111,7 @@ public class SimpleChat {
      * Gracefully shutdown of client Thread calling {@link SimpleChatClient#shutdown()}
      */
     public void stop() {
-        this.client.shutdown();
+        this.controller.stop();
 
     }
 

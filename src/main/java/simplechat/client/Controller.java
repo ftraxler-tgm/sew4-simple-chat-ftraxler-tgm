@@ -32,18 +32,17 @@ public class Controller {
 
     @FXML
     protected void handleMessageButtonAction(ActionEvent event) {
+        event.consume();
         this.sendMessage();
-        simpleChat.clientLogger.log(INFO,"Button Pressed");
+        simpleChat.clientLogger.log(INFO,"Send Button pressed");
+        this.textField.setText("");
     }
 
     public void initialize() {
-
-        simpleChat = new SimpleChat("ftraxler","localhost",5050);
         this.scheduledExecutorService.submit(clearText);
     }
 
     public void stop() {
-        this.simpleChat.stop();
         scheduledExecutorService.shutdown();
 
     }

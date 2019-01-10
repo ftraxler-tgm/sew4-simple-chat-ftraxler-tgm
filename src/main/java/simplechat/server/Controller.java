@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class Controller {
 
@@ -33,10 +34,15 @@ public class Controller {
 
     @FXML
     protected void handleMessageButtonAction(ActionEvent event) {
+        event.consume();
+        this.simpleChat.sendMessage(this.textField.getText());
+        this.textField.setText("");
     }
 
     @FXML
     protected void handleRemoveButtonAction(ActionEvent event) {
+        event.consume();
+
     }
 
     public void initialize() {
@@ -53,6 +59,8 @@ public class Controller {
     }
 
     public void updateTextAreaWithText(String text) {
+        SimpleChat.serverLogger.log(Level.INFO,"Textarea:"+this.textArea.getText());
+        SimpleChat.serverLogger.log(Level.INFO,"New Text:"+text);
         this.textArea.setText(text);
     }
 
@@ -66,7 +74,7 @@ public class Controller {
     public void removeUser(String user) {
         ObservableList<String> items=this.listView.getItems();
         for(int i=0;i<items.size();i++){
-            if(items.get(i).equals("user")){
+            if(items.get(i).equals(user)){
                 items.remove(i);
             }
         }
