@@ -111,7 +111,7 @@ public class SimpleChat {
      * Gracefully shutdown of client Thread calling {@link SimpleChatClient#shutdown()}
      */
     public void stop() {
-        this.controller.stop();
+        this.client.shutdown();
 
     }
 

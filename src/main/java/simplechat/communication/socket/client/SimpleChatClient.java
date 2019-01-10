@@ -119,7 +119,7 @@ public class SimpleChatClient extends Thread {
                 switch (cmd){
                     case EXIT:
                         SimpleChat.clientLogger.log(INFO,"Client is shuting down");
-                        this.shutdown();
+                        this.client.stop();
 
                         break;
                     case PRIVATE:
@@ -177,7 +177,6 @@ public class SimpleChatClient extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.client.stop();
 
         SimpleChat.clientLogger.log(INFO, "Shutting down Client ... listening=" + listening);
     }
