@@ -81,7 +81,7 @@ public class SimpleChatClient extends Thread {
 
             this.socket.setKeepAlive(true);
             SimpleChat.clientLogger.log(INFO,"Socket Listening....");
-            this.out = new PrintWriter(socket.getOutputStream(),true);
+            this.out = new PrintWriter(socket.getOutputStream(),true);// autoflush true damit es auch geschickt ist damit der Buffer geleert wird
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while((currentMessage = in.readLine() )!= null && listening){
                 SimpleChat.clientLogger.log(INFO,"The Client got the message "+this.currentMessage);
@@ -122,8 +122,6 @@ public class SimpleChatClient extends Thread {
                         this.client.stop();
 
                         break;
-                    case PRIVATE:
-                        break;
                     case CHATNAME:
 
                         //TODO
@@ -146,6 +144,25 @@ public class SimpleChatClient extends Thread {
      * @param message Public message for server intercommunication
      */
     public void send(String message) {
+        SimpleChat.clientLogger.log(INFO,"Command YES/NO"+currentMessage.startsWith("!"));
+
+        if(currentMessage.startsWith("!")){
+            SimpleChat.clientLogger.log(INFO,"Command has been send");
+            String[] texts = currentMessage.substring(1).split(" ",2);
+            SimpleChat.clientLogger.log(INFO,"Command: "+texts[0]);
+            MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
+            switch (cmd){
+                case EXIT:
+                    SimpleChat.clientLogger.log(INFO,"Client is shuting down");
+                    this.client.stop();
+                case PRIVATE:
+
+                    break;
+                case CHATNAME:
+
+                    //TODO
+                    break;
+            }
             out.println(message);
 
     }
@@ -171,12 +188,24 @@ public class SimpleChatClient extends Thread {
         this.listening=false;
 
         try {
-            this.socket.close();
-            this.in.close();
-            this.out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            out.close();
         }
+
+        finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    socket.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
 
         SimpleChat.clientLogger.log(INFO, "Shutting down Client ... listening=" + listening);
     }

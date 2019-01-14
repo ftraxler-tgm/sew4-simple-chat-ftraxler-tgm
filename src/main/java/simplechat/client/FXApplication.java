@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import static java.util.logging.Level.INFO;
 import static javafx.scene.control.Alert.AlertType.*;
 
 public class FXApplication extends Application {
@@ -56,6 +57,7 @@ public class FXApplication extends Application {
 
     @Override
     public void stop(){
-        controller.stop();
+        SimpleChat.clientLogger.log(INFO,"X pressed");
+        simpleChat.stop();
     }
 }

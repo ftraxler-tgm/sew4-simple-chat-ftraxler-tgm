@@ -43,7 +43,6 @@ public class Controller {
     }
 
     public void stop() {
-        this.simpleChat.stop();
         scheduledExecutorService.shutdown();
 
     }

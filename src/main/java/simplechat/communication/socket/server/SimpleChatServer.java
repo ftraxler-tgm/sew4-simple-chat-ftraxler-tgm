@@ -102,7 +102,7 @@ public class SimpleChatServer extends Thread {
            switch (cmd){
                case EXIT:
                    SimpleChat.serverLogger.log(INFO,"Client is shutdowned");
-                   sender.shutdown();
+                   this.removeClient(sender);
 
                    break;
                case PRIVATE:
@@ -164,7 +164,7 @@ public class SimpleChatServer extends Thread {
      * @param worker ClientWorker which should be removed
      */
     void removeClient(ClientWorker worker) {
-        this.server.removeClient(this.workerList.get(worker));
+        this.server.removeClient(workerList.get(worker));
         this.workerList.remove(worker);
         worker.shutdown();
     }
@@ -194,6 +194,7 @@ public class SimpleChatServer extends Thread {
             this.serverSocket.close();
             for(ClientWorker o: workerList.keySet())
                 o.shutdown();
+            this.executorService.shutdown();
             SimpleChat.serverLogger.log(INFO,"Everthing shutdowned");
         }
         catch (IOException ioE){
@@ -260,8 +261,17 @@ class ClientWorker implements Runnable {
      */
     void shutdown() {
         if(listening){
+            listening=false;
             SimpleChat.serverLogger.log(INFO, "Shutting down ClientWorker ... listening=" + listening);
             this.send(MessageProtocol.getMessage(EXIT));
+            try {
+                out.close();
+                in.close();
+                client.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

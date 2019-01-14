@@ -209,6 +209,7 @@ public class SimpleChat {
     public void removeClient(String chatName) {
         serverLogger.log(INFO, "Client ("+chatName+") removed...");
         users.remove(chatName);
+        this.controller.removeUser(chatName);
     }
 
     /**
