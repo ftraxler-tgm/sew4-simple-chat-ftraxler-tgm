@@ -70,7 +70,7 @@ public class SimpleChat {
             serverLogger.log(INFO, "Parameters set by user: " +
                     "host=" + host + " port=" + port + " verbose=" + verbose);
         } catch (ParseException e) {
-            serverLogger.log(SEVERE, e.toString());
+            serverLogger.log(SEVERE, e.toString()+"XXXXX");
             System.exit(1);
         }
 

@@ -112,7 +112,6 @@ public class SimpleChat {
      */
     public void stop() {
         this.controller.stop();
-        this.client.shutdown();
 
 
     }

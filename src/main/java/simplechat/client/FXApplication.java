@@ -57,7 +57,6 @@ public class FXApplication extends Application {
 
     @Override
     public void stop(){
-        SimpleChat.clientLogger.log(INFO,"X pressed");
-        simpleChat.stop();
+        simpleChat.sendMessage("!EXIT");
     }
 }

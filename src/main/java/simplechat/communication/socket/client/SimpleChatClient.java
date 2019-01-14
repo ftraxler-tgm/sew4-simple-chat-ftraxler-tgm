@@ -89,7 +89,7 @@ public class SimpleChatClient extends Thread {
 
             }
         } catch (IOException e) {
-            SimpleChat.clientLogger.log(SEVERE,""+e.getMessage());
+            SimpleChat.clientLogger.log(SEVERE,""+e.getMessage()+"XXXXX");
         }
 
     }
@@ -118,9 +118,9 @@ public class SimpleChatClient extends Thread {
                 MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
                 switch (cmd){
                     case EXIT:
-                        SimpleChat.clientLogger.log(INFO,"Client is shuting down");
-                        this.client.stop();
-
+                        this.listening=false;
+                        this.shutdown();
+                    case PRIVATE:
                         break;
                     case CHATNAME:
 
@@ -144,25 +144,7 @@ public class SimpleChatClient extends Thread {
      * @param message Public message for server intercommunication
      */
     public void send(String message) {
-        SimpleChat.clientLogger.log(INFO,"Command YES/NO"+currentMessage.startsWith("!"));
 
-        if(currentMessage.startsWith("!")){
-            SimpleChat.clientLogger.log(INFO,"Command has been send");
-            String[] texts = currentMessage.substring(1).split(" ",2);
-            SimpleChat.clientLogger.log(INFO,"Command: "+texts[0]);
-            MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
-            switch (cmd){
-                case EXIT:
-                    SimpleChat.clientLogger.log(INFO,"Client is shuting down");
-                    this.client.stop();
-                case PRIVATE:
-
-                    break;
-                case CHATNAME:
-
-                    //TODO
-                    break;
-            }
             out.println(message);
 
     }
@@ -185,25 +167,23 @@ public class SimpleChatClient extends Thread {
      * Finally we are closing all open resources.
      */
     public void shutdown() {
-        this.listening=false;
+        if (listening) {
 
-        try {
-            out.close();
         }
+        if (socket.isConnected()) {
 
-        finally {
+            SimpleChat.clientLogger.log(INFO,"Shutdown Socket");
             try {
+                out.close();
                 in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    socket.close();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
+                socket.close();
 
+            }catch(IOException e){
+                SimpleChat.clientLogger.log(SEVERE,e.toString());
+            }finally {
+                SimpleChat.clientLogger.log(INFO,"Shutdown sucessfull");
             }
+
         }
 
 
