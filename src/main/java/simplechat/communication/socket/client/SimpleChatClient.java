@@ -75,7 +75,6 @@ public class SimpleChatClient extends Thread {
      */
     public void run() {
         try {
-            this.listening=true;
             this.socket=new Socket();
             this.socket.connect(this.socketAddress, 2000);
 
@@ -83,9 +82,10 @@ public class SimpleChatClient extends Thread {
             SimpleChat.clientLogger.log(INFO,"Socket Listening....");
             this.out = new PrintWriter(socket.getOutputStream(),true);// autoflush true damit es auch geschickt ist damit der Buffer geleert wird
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.listening=true;
             while((currentMessage = in.readLine() )!= null && listening){
                 SimpleChat.clientLogger.log(INFO,"The Client got the message "+this.currentMessage);
-                received();
+                this.received();
 
             }
         } catch (IOException e) {
