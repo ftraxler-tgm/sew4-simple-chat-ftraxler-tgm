@@ -219,7 +219,6 @@ public class SimpleChat {
      * @param chatName Client which will be informed of shutdown
      */
     public void shutdownClient(String chatName) {
-        server.removeClient(chatName);
         removeClient(chatName);
     }
 

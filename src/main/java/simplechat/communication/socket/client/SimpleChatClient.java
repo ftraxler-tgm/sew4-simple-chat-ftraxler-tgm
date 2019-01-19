@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import static java.util.logging.Level.*;
@@ -74,24 +75,41 @@ public class SimpleChatClient extends Thread {
      * the {@link #shutdown()} method will be called.
      */
     public void run() {
+
+
+        SimpleChat.clientLogger.log(INFO, "Run des SimpleChatClients");
+
         try {
             this.socket=new Socket();
             this.socket.connect(this.socketAddress, 2000);
-
             this.socket.setKeepAlive(true);
-            SimpleChat.clientLogger.log(INFO,"Socket Listening....");
-            this.out = new PrintWriter(socket.getOutputStream(),true);// autoflush true damit es auch geschickt ist damit der Buffer geleert wird
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.listening=true;
-            while((currentMessage = in.readLine() )!= null && listening){
-                SimpleChat.clientLogger.log(INFO,"The Client got the message "+this.currentMessage);
-                this.received();
 
+            try {
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            } catch (IOException e) {
+                SimpleChat.clientLogger.log(SEVERE,e.getMessage()+ " IN/OUT");
             }
-        } catch (IOException e) {
-            SimpleChat.clientLogger.log(SEVERE,""+e.getMessage()+"XXXXX");
-        }
 
+            listening = true;
+
+            SimpleChat.clientLogger.log(INFO, "Name wird an Socket geschickt");
+            out.println(MessageProtocol.getMessage(CHATNAME)+" "+name);
+
+            while(listening){
+                if((currentMessage = in.readLine() )!= null) {
+                    SimpleChat.clientLogger.log(INFO, "Neue Nachricht ist beim Client angekommen: " + currentMessage);
+                    SimpleChat.clientLogger.log(INFO, "Client Socket wartet auf eine Nachricht.");
+                    this.received();
+                }
+            }
+        } catch(Exception E) {
+            SimpleChat.clientLogger.log(SEVERE,E.getMessage()+" SOCKET");
+
+            if (socket.isBound() && socket.isConnected()) {
+                this.shutdown();
+            }
+        }
     }
 
     /**
@@ -144,8 +162,9 @@ public class SimpleChatClient extends Thread {
      * @param message Public message for server intercommunication
      */
     public void send(String message) {
-
+        if(listening)
             out.println(message);
+        //this.shutdown();
 
     }
 
@@ -168,22 +187,30 @@ public class SimpleChatClient extends Thread {
      */
     public void shutdown() {
         if (listening) {
-
+            this.client.sendMessage("!EXIT");
         }
         if (socket.isConnected()) {
 
             SimpleChat.clientLogger.log(INFO,"Shutdown Socket");
             try {
                 out.close();
-                in.close();
-                socket.close();
-
-            }catch(IOException e){
-                SimpleChat.clientLogger.log(SEVERE,e.toString());
-            }finally {
-                SimpleChat.clientLogger.log(INFO,"Shutdown sucessfull");
             }
 
+            finally {
+                try {
+                    in.close();
+                }catch (IOException ioe){
+                    SimpleChat.clientLogger.log(SEVERE,ioe.getMessage());
+                }
+
+                finally {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        SimpleChat.clientLogger.log(SEVERE,e.getMessage());
+                    }
+                }
+            }
         }
 
 

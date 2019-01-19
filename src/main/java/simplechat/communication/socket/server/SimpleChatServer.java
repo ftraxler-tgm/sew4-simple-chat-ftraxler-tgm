@@ -119,7 +119,6 @@ public class SimpleChatServer extends Thread {
            plainMessage = MessageProtocol.textMessage(plainMessage, workerList.get(sender));
            this.server.incomingMessage(plainMessage);
            for (ClientWorker o : workerList.keySet())
-               if (!(o.equals(sender)))
                    o.send(plainMessage);
        }
 
@@ -164,7 +163,7 @@ public class SimpleChatServer extends Thread {
      * @param worker ClientWorker which should be removed
      */
     void removeClient(ClientWorker worker) {
-        this.server.removeClient(workerList.get(worker));
+        this.server.shutdownClient(workerList.get(worker));
         this.workerList.remove(worker);
         worker.shutdown();
     }
@@ -177,7 +176,10 @@ public class SimpleChatServer extends Thread {
      */
     public void removeClient(String chatName) {
         this.server.removeClient(chatName);
-        //TODO
+        for (ClientWorker o : workerList.keySet())
+             if(workerList.get(o).equals(chatName)){
+                 this.workerList.remove(o);
+             }
 
 
     }

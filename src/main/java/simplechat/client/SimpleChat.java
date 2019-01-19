@@ -129,8 +129,9 @@ public class SimpleChat {
      * @param message Public message for server intercommunication
      */
     public void sendMessage(String message) {
-        clientLogger.log(INFO, "UI gave me this message: " + message);
-        this.client.send(message);
+        if(isConnected())
+            clientLogger.log(INFO, "UI gave me this message: " + message);
+            this.client.send(message);
     }
 
     /**

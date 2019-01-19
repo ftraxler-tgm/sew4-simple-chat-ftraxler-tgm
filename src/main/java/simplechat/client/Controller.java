@@ -57,7 +57,7 @@ public class Controller {
 
     public void sendMessage() {
         this.simpleChat.sendMessage(this.textField.getText());
-        this.updateTextAreaWithText(this.textField.getText());
+
     }
 
     Runnable clearText = () -> {

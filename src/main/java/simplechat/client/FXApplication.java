@@ -58,5 +58,6 @@ public class FXApplication extends Application {
     @Override
     public void stop(){
         simpleChat.sendMessage("!EXIT");
+        this.controller.stop();
     }
 }
