@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -60,26 +61,22 @@ public class SimpleChatServer extends Thread {
      * to the ExecutorService for immediate concurrent action.
      */
     public void run() {
-        try {
+        try{
             SimpleChat.serverLogger.log(INFO, "... starting Thread ...");
             this.serverSocket = new ServerSocket(this.port, this.backlog);
-        }
-        catch(IOException ioE){
-            SimpleChat.serverLogger.log(INFO,""+ioE.getMessage());
-        }
-        try {
+
+
             while (listening) {
                 SimpleChat.serverLogger.log(INFO, "Listening...");
                 ClientWorker c = new ClientWorker(this.serverSocket.accept(), this);
-                workerList.put(c, this.server.addClient("Client "+(workerList.size()+1)));
+                workerList.put(c, this.server.addClient("Client"+(workerList.size()+1)));
                 executorService.execute(c);
                 SimpleChat.serverLogger.log(INFO, "ClientWorker added");
 
             }
 
         }catch(IOException e){
-            SimpleChat.serverLogger.log(INFO,"Error adding Client: \n "+e.getMessage());
-            e.printStackTrace();
+            SimpleChat.serverLogger.log(SEVERE,"Error adding Client: \n "+e.getMessage());
         }
         SimpleChat.serverLogger.log(INFO,"Shutdown Thread!!!!");
 
@@ -93,11 +90,10 @@ public class SimpleChatServer extends Thread {
      */
     public void received(String plainMessage, ClientWorker sender) {
 
-        SimpleChat.serverLogger.log(INFO,"Command YES/NO "+plainMessage.startsWith("!"));
 
        if(plainMessage.startsWith("!")){
            SimpleChat.serverLogger.log(INFO,"Command has been send");
-           String[] texts = plainMessage.substring(1).split(" ",2);
+           String[] texts = plainMessage.substring(1).split(" ",3);
            SimpleChat.serverLogger.log(INFO,"Command: "+texts[0]);
            MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
            switch (cmd){
@@ -107,6 +103,19 @@ public class SimpleChatServer extends Thread {
 
                    break;
                case PRIVATE:
+
+                   SimpleChat.serverLogger.log(INFO,""+texts[2]);
+                   if(texts.length>2){
+                       for (ClientWorker o : workerList.keySet()){
+                           if(this.workerList.get(o).equals(texts[1])){
+                               plainMessage = MessageProtocol.privateMessage(texts[2],this.workerList.get(sender));
+                               o.send(plainMessage);
+                           }
+                       }
+
+                   }else {
+                       sender.send("Enter amother Chatname");
+                   }
                    break;
                case CHATNAME:
                    SimpleChat.serverLogger.log(INFO,"Changing Name...");
@@ -136,6 +145,7 @@ public class SimpleChatServer extends Thread {
      * @param message MessageText with sender ChatName
      */
     public void send(String message) {
+        message = MessageProtocol.textMessage(message,"SERVER");
         for(ClientWorker o: workerList.keySet())
             o.send(message);
 
@@ -204,29 +214,29 @@ public class SimpleChatServer extends Thread {
      * active ClientWorker Threads.
      */
     public void shutdown() {
+
+
+
+        for (ClientWorker o : workerList.keySet()) {
+            o.shutdown();
+        }
         this.listening=false;
+        executorService.shutdown();
+        SimpleChat.serverLogger.log(INFO, "All Clients have been shutdowned");
+
+
+
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try{
-            for(ClientWorker o: workerList.keySet())
-                o.shutdown();
-            SimpleChat.serverLogger.log(INFO,"All Clients have been shutdowned");
 
+            this.serverSocket.close();
+            SimpleChat.serverLogger.log(INFO, "Serversocket closed "+serverSocket.isClosed());
+            this.executorService.shutdownNow();
+            SimpleChat.serverLogger.log(INFO,"EXECUTORSERVICE "+this.executorService.isShutdown());
+            SimpleChat.serverLogger.log(INFO,""+this.executorService.isShutdown());
+        } catch (IOException e) {
+                SimpleChat.serverLogger.log(SEVERE, e.getMessage());
 
-        }finally {
-            try {
-                this.serverSocket.close();
-                SimpleChat.serverLogger.log(INFO,"Serversocket closed");
-            } catch (IOException e) {
-                SimpleChat.serverLogger.log(SEVERE,e.getMessage());
-            }finally {
-                this.executorService.shutdown();
-            }
         }
-        SimpleChat.serverLogger.log(INFO,"Everthing shutdowned");
 
     }
 }
@@ -272,8 +282,9 @@ class ClientWorker implements Runnable {
         SimpleChat.serverLogger.log(INFO,"ClientWorker laeuft");
         while(listening){
             try {
-                String message =in.readLine();
-                callback.received(message,this);
+                String message;
+                if((message = in.readLine() )!= null)
+                    callback.received(message,this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -287,10 +298,14 @@ class ClientWorker implements Runnable {
      * Finally we are closing all open resources.
      */
     void shutdown() {
-        if(listening){
-            listening=false;
-            SimpleChat.serverLogger.log(INFO, "Shutting down ClientWorker ... listening=" + listening);
+        if(listening) {
+            listening = false;
             this.send(MessageProtocol.getMessage(EXIT));
+            SimpleChat.serverLogger.log(INFO, "Shutting down ClientWorker ... listening=" + listening);
+        }
+
+        try {
+            Thread.sleep(1000);
             if (client.isConnected()) {
 
                 SimpleChat.serverLogger.log(INFO,"Shutdown Socket");
@@ -308,14 +323,18 @@ class ClientWorker implements Runnable {
                     finally {
                         try {
                             client.close();
+                            SimpleChat.serverLogger.log(INFO,"Client Socket: "+client.isClosed());
                         } catch (IOException e) {
                             SimpleChat.serverLogger.log(SEVERE,e.getMessage());
                         }
                     }
                 }
             }
-
+        }catch (Exception e){
+            SimpleChat.serverLogger.log(SEVERE,e.getMessage());
         }
+
+
     }
 
     /**

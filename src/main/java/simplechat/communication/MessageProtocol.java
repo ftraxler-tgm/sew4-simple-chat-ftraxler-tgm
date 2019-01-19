@@ -58,4 +58,7 @@ public class MessageProtocol implements Serializable {
     public static String textMessage(String plainMessage, String chatName) {
         return "[" + chatName + "] " + plainMessage;
     }
+    public static  String privateMessage(String plainMessage, String chatNam){
+        return "[PRIVATE]"+ textMessage(plainMessage,chatNam);
+    }
 }

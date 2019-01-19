@@ -43,6 +43,7 @@ public class Controller {
     protected void handleRemoveButtonAction(ActionEvent event) {
         event.consume();
 
+
     }
 
     public void initialize() {
@@ -64,7 +65,7 @@ public class Controller {
     public void updateTextAreaWithText(String text) {
         SimpleChat.serverLogger.log(Level.INFO,"Textarea:"+this.textArea.getText());
         SimpleChat.serverLogger.log(Level.INFO,"New Text:"+text);
-        this.textArea.setText(text);
+        this.textArea.setText(this.textArea.getText()+"\n"+text);
     }
 
     public void addUser(String user) {

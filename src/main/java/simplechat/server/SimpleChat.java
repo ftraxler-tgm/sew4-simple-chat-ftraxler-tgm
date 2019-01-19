@@ -132,6 +132,7 @@ public class SimpleChat {
     public void sendMessage(String message) {
         if(isConnected())
          serverLogger.log(INFO, "UI gave me this message: " + message);
+
          this.server.send(message);
          this.sentMessages.add(message);
          this.controller.updateTextAreaWithText(message);
@@ -157,7 +158,7 @@ public class SimpleChat {
      */
     public void incomingMessage(String message) {
         this.receivedMessages.add(message);
-        this.controller.updateTextAreaWithText(String.join("\n",this.receivedMessages));
+        this.controller.updateTextAreaWithText(message);
 
     }
 

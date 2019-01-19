@@ -98,8 +98,7 @@ public class SimpleChatClient extends Thread {
 
             while(listening){
                 if((currentMessage = in.readLine() )!= null) {
-                    SimpleChat.clientLogger.log(INFO, "Neue Nachricht ist beim Client angekommen: " + currentMessage);
-                    SimpleChat.clientLogger.log(INFO, "Client Socket wartet auf eine Nachricht.");
+                    SimpleChat.clientLogger.log(INFO, "Client got a message: " + currentMessage);
                     this.received();
                 }
             }
@@ -127,7 +126,6 @@ public class SimpleChatClient extends Thread {
     private void received() {
         if(isListening()){
 
-            SimpleChat.clientLogger.log(INFO,"Command YES/NO"+currentMessage.startsWith("!"));
 
             if(currentMessage.startsWith("!")){
                 SimpleChat.clientLogger.log(INFO,"Command has been send");
@@ -186,34 +184,33 @@ public class SimpleChatClient extends Thread {
      */
     public void shutdown() {
         if (listening) {
+            SimpleChat.clientLogger.log(INFO,"Sending SHUTDOWN");
             this.client.sendMessage("!EXIT");
-        }
-        if (socket.isConnected()) {
+        }else if (socket.isConnected()) {
 
-            SimpleChat.clientLogger.log(INFO,"Shutdown Socket");
-            try {
-                out.close();
-            }
-
-            finally {
+                SimpleChat.clientLogger.log(INFO,"Shutdown Socket");
                 try {
-                    in.close();
-                }catch (IOException ioe){
-                    SimpleChat.clientLogger.log(SEVERE,ioe.getMessage());
+                    out.close();
                 }
 
                 finally {
                     try {
-                        socket.close();
-                    } catch (IOException e) {
-                        SimpleChat.clientLogger.log(SEVERE,e.getMessage());
+                        in.close();
+                    }catch (IOException ioe){
+                        SimpleChat.clientLogger.log(SEVERE,ioe.getMessage());
+                    }
+
+                    finally {
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            SimpleChat.clientLogger.log(SEVERE,e.getMessage());
+                        }
                     }
                 }
-            }
         }
 
 
-        SimpleChat.clientLogger.log(INFO, "Shutting down Client ... listening=" + listening);
     }
 
     /**
