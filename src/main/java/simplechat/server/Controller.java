@@ -51,7 +51,10 @@ public class Controller {
     }
 
     public void stop() {
+
         this.simpleChat.stop();
+        this.scheduledExecutorService.shutdown();
+
     }
 
     public void setSimpleChat(SimpleChat simpleChat) {
@@ -65,19 +68,32 @@ public class Controller {
     }
 
     public void addUser(String user) {
-        ObservableList<String> items=this.listView.getItems();
-        items.add(user);
-        this.listView.setItems(items);
+        ObservableList<String> users = this.listView.getItems();
+
+        Platform.runLater(() ->
+        {
+            users.add(user);
+            this.listView.setItems(users);
+        });
+
+
 
     }
 
     public void removeUser(String user) {
-        ObservableList<String> items=this.listView.getItems();
-        for(int i=0;i<items.size();i++){
-            if(items.get(i).equals(user)){
-                items.remove(i);
+
+        ObservableList<String> users = this.listView.getItems();
+
+        Platform.runLater(() ->
+        {
+            for(int i=0;i<users.size();i++){
+                if(users.get(i).equals(user)){
+                    users.remove(i);
+
+                }
             }
-        }
+            this.listView.setItems(users);
+        });
     }
 
     Runnable clearText = () -> {

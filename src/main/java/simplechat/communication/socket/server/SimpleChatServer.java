@@ -1,5 +1,6 @@
 package simplechat.communication.socket.server;
 
+import com.sun.org.apache.bcel.internal.generic.IFNE;
 import simplechat.communication.MessageProtocol;
 import simplechat.server.SimpleChat;
 
@@ -92,7 +93,7 @@ public class SimpleChatServer extends Thread {
      */
     public void received(String plainMessage, ClientWorker sender) {
 
-        SimpleChat.serverLogger.log(INFO,"Command YES/NO"+plainMessage.startsWith("!"));
+        SimpleChat.serverLogger.log(INFO,"Command YES/NO "+plainMessage.startsWith("!"));
 
        if(plainMessage.startsWith("!")){
            SimpleChat.serverLogger.log(INFO,"Command has been send");
@@ -108,8 +109,13 @@ public class SimpleChatServer extends Thread {
                case PRIVATE:
                    break;
                case CHATNAME:
-                   this.setName(" ",sender);
-                   //TODO
+                   SimpleChat.serverLogger.log(INFO,"Changing Name...");
+                   if(texts.length>1) {
+                       this.setName(texts[1], sender);
+                       sender.send("Your new chatname is "+this.workerList.get(sender));
+                   }else {
+                       sender.send("Enter a Chatname");
+                   }
                    break;
            }
 
@@ -152,8 +158,15 @@ public class SimpleChatServer extends Thread {
      * @param worker   ClientWorker Thread which was initiating the renaming
      */
     void setName(String chatName, ClientWorker worker) {
-        this.workerList.replace(worker,chatName);
-        //TODO
+        String newName= this.server.renameClient(this.workerList.get(worker),chatName);
+        SimpleChat.serverLogger.log(INFO,"NEWNAME: "+newName);
+        if(newName != null){
+            this.workerList.replace(worker,newName);
+            SimpleChat.serverLogger.log(INFO,"Name has been replaced to "+this.workerList.get(worker));
+        }else{
+            SimpleChat.serverLogger.log(WARNING,"Error while changing the name");
+        }
+
     }
 
     /**
@@ -191,17 +204,29 @@ public class SimpleChatServer extends Thread {
      * active ClientWorker Threads.
      */
     public void shutdown() {
+        this.listening=false;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         try{
-            this.listening=false;
-            this.serverSocket.close();
             for(ClientWorker o: workerList.keySet())
                 o.shutdown();
-            this.executorService.shutdown();
-            SimpleChat.serverLogger.log(INFO,"Everthing shutdowned");
+            SimpleChat.serverLogger.log(INFO,"All Clients have been shutdowned");
+
+
+        }finally {
+            try {
+                this.serverSocket.close();
+                SimpleChat.serverLogger.log(INFO,"Serversocket closed");
+            } catch (IOException e) {
+                SimpleChat.serverLogger.log(SEVERE,e.getMessage());
+            }finally {
+                this.executorService.shutdown();
+            }
         }
-        catch (IOException ioE){
-            SimpleChat.serverLogger.log(INFO,""+ioE.getMessage());
-        }
+        SimpleChat.serverLogger.log(INFO,"Everthing shutdowned");
 
     }
 }
@@ -266,12 +291,28 @@ class ClientWorker implements Runnable {
             listening=false;
             SimpleChat.serverLogger.log(INFO, "Shutting down ClientWorker ... listening=" + listening);
             this.send(MessageProtocol.getMessage(EXIT));
-            try {
-                out.close();
-                in.close();
-                client.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (client.isConnected()) {
+
+                SimpleChat.serverLogger.log(INFO,"Shutdown Socket");
+                try {
+                    out.close();
+                }
+
+                finally {
+                    try {
+                        in.close();
+                    }catch (IOException ioe){
+                        SimpleChat.serverLogger.log(SEVERE,ioe.getMessage());
+                    }
+
+                    finally {
+                        try {
+                            client.close();
+                        } catch (IOException e) {
+                            SimpleChat.serverLogger.log(SEVERE,e.getMessage());
+                        }
+                    }
+                }
             }
 
         }

@@ -42,6 +42,6 @@ public class FXApplication extends Application {
 
     @Override
     public void stop(){
-        controller.stop();
+        this.controller.stop();
     }
 }

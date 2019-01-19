@@ -111,7 +111,7 @@ public class SimpleChat {
      * Gracefully shutdown of client Thread calling {@link SimpleChatClient#shutdown()}
      */
     public void stop() {
-        this.controller.stop();
+        this.client.shutdown();
 
 
     }
@@ -141,8 +141,9 @@ public class SimpleChat {
      * @param chatName Name of receiver
      */
     public void sendMessage(String message, String chatName) {
-        clientLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
-        this.client.send(message,chatName);
+        if(this.isConnected())
+            clientLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
+            this.client.send(message,chatName);
     }
 
     /**

@@ -179,6 +179,7 @@ public class SimpleChat {
      */
     public synchronized String addClient(String chatName) {
         String name = chatName;
+        users.add(chatName);
         this.controller.addUser(chatName);
         return name;
     }
@@ -192,8 +193,12 @@ public class SimpleChat {
      * or an adapted new name (e.g. Franz#1)
      */
     public synchronized String renameClient(String oldChatName, String newChatName) {
-        if(users.remove(oldChatName)){
+        SimpleChat.serverLogger.log(INFO,"Trying to change name");
+
+        if(users.remove(oldChatName)&& users.add(newChatName)){
             serverLogger.log(INFO, "Renaming Client...");
+            this.controller.removeUser(oldChatName);
+            SimpleChat.serverLogger.log(INFO,"Updating the GUI");
            return this.addClient(newChatName);
         }
         return null;
