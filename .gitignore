@@ -12,6 +12,7 @@ build
 .classpath
 .project
 .settings/
+.java_pid54060.hprof
 
 # Ignore generated files
 out/
