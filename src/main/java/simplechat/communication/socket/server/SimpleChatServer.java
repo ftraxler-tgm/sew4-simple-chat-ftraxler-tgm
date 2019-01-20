@@ -70,7 +70,8 @@ public class SimpleChatServer extends Thread {
                 SimpleChat.serverLogger.log(INFO, "Listening...");
                 ClientWorker c = new ClientWorker(this.serverSocket.accept(), this);
                 workerList.put(c, this.server.addClient("Client"+(workerList.size()+1)));
-                executorService.execute(c);
+                if(!this.executorService.isShutdown())
+                    executorService.execute(c);
                 SimpleChat.serverLogger.log(INFO, "ClientWorker added");
 
             }
@@ -103,15 +104,40 @@ public class SimpleChatServer extends Thread {
 
                    break;
                case PRIVATE:
-
                    SimpleChat.serverLogger.log(INFO,""+texts[2]);
                    if(texts.length>2){
-                       for (ClientWorker o : workerList.keySet()){
-                           if(this.workerList.get(o).equals(texts[1])){
-                               plainMessage = MessageProtocol.privateMessage(texts[2],this.workerList.get(sender));
-                               o.send(plainMessage);
+                       if(plainMessage.contains("{")&&plainMessage.contains("}")){
+                                String usersnames = plainMessage.substring(plainMessage.indexOf("{"),plainMessage.indexOf("}"));
+                                String message = plainMessage.substring(plainMessage.indexOf("}"));
+                                usersnames = usersnames.replace(" ","");
+                                usersnames = usersnames.replace("{","");
+                                String[] names =usersnames.split(",",10);
+                                message= message.substring(2);
+                                SimpleChat.serverLogger.log(INFO,"User1: "+names[0]);
+                                SimpleChat.serverLogger.log(INFO,"User1: "+names[1]);
+
+                                SimpleChat.serverLogger.log(INFO,""+message);
+                                plainMessage = MessageProtocol.privateMessage(message,this.workerList.get(sender));
+                                sender.send(plainMessage);
+                               for (ClientWorker o : workerList.keySet()){
+
+                                   for(int i=0;i<names.length;i++) {
+                                       if (this.workerList.get(o).equals(names[i])) {
+                                           o.send(plainMessage);
+
+                                       }
+                                   }
+                               }
+                       }else {
+                           for (ClientWorker o : workerList.keySet()){
+                               if(this.workerList.get(o).equals(texts[1])){
+                                   plainMessage = MessageProtocol.privateMessage(texts[2],this.workerList.get(sender));
+                                   o.send(plainMessage);
+                                   sender.send(plainMessage);
+                               }
                            }
                        }
+
 
                    }else {
                        sender.send("Enter amother Chatname");
@@ -158,6 +184,8 @@ public class SimpleChatServer extends Thread {
      * @param receiver ChatName of receiving Client
      */
     public void send(String message, Object receiver) {
+
+
     }
 
     /**
@@ -186,6 +214,7 @@ public class SimpleChatServer extends Thread {
      * @param worker ClientWorker which should be removed
      */
     void removeClient(ClientWorker worker) {
+        SimpleChat.serverLogger.log(INFO,"Remove/Shutdown Client");
         this.server.shutdownClient(workerList.get(worker));
         this.workerList.remove(worker);
         worker.shutdown();
@@ -198,10 +227,12 @@ public class SimpleChatServer extends Thread {
      * @param chatName Client name which should be removed
      */
     public void removeClient(String chatName) {
-        this.server.removeClient(chatName);
+        SimpleChat.serverLogger.log(INFO,"Remove/Shutdown Client");
         for (ClientWorker o : workerList.keySet())
              if(workerList.get(o).equals(chatName)){
+                 SimpleChat.serverLogger.log(INFO,"Remove/Shutdown Client shutdowned");
                  this.workerList.remove(o);
+                 o.shutdown();
              }
 
 
@@ -214,30 +245,33 @@ public class SimpleChatServer extends Thread {
      * active ClientWorker Threads.
      */
     public void shutdown() {
-
+        this.listening=false;
 
 
         for (ClientWorker o : workerList.keySet()) {
-            o.shutdown();
+            this.removeClient(o);
         }
-        this.listening=false;
-        executorService.shutdown();
+
         SimpleChat.serverLogger.log(INFO, "All Clients have been shutdowned");
 
 
-
         try {
+            Thread.sleep(1000);
+            if(!serverSocket.isClosed()){
+                Socket close = new Socket(host,port);
+                this.serverSocket.close();
+                close.close();
 
-            this.serverSocket.close();
-            SimpleChat.serverLogger.log(INFO, "Serversocket closed "+serverSocket.isClosed());
-            this.executorService.shutdownNow();
-            SimpleChat.serverLogger.log(INFO,"EXECUTORSERVICE "+this.executorService.isShutdown());
-            SimpleChat.serverLogger.log(INFO,""+this.executorService.isShutdown());
-        } catch (IOException e) {
+            }
+
+        } catch (Exception e) {
                 SimpleChat.serverLogger.log(SEVERE, e.getMessage());
 
         }
-
+        this.executorService.shutdownNow();
+        SimpleChat.serverLogger.log(INFO, "Serversocket closed "+serverSocket.isClosed());
+        SimpleChat.serverLogger.log(INFO,"EXECUTORSERVICE "+this.executorService.isShutdown());
+        SimpleChat.serverLogger.log(INFO,""+this.executorService.isShutdown());
     }
 }
 

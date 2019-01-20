@@ -40,7 +40,7 @@ public class SimpleChat {
         clientLogger.setLevel(FINE);
         clientLogger.setUseParentHandlers(false);
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(ALL);
+        ch.setLevel(SEVERE);
         clientLogger.addHandler(ch);
 
         CommandLineParser parser = new DefaultParser();

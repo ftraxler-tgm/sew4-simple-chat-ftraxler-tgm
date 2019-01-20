@@ -47,7 +47,7 @@ public class SimpleChat {
         serverLogger.setLevel(FINE);
         serverLogger.setUseParentHandlers(false);
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(ALL);
+        ch.setLevel(SEVERE);
         serverLogger.addHandler(ch);
 
         CommandLineParser parser = new DefaultParser();
@@ -147,7 +147,6 @@ public class SimpleChat {
     public void sendMessage(String message, String chatName) {
         if (isConnected())
             //serverLogger.log(INFO, "UI gave me this message: " + message + " for this user: " + chatName);
-        this.server.send(message, chatName);
         this.sentMessages.add(message);
     }
 
@@ -225,6 +224,7 @@ public class SimpleChat {
      * @param chatName Client which will be informed of shutdown
      */
     public void shutdownClient(String chatName) {
+        this.server.removeClient(chatName);
         removeClient(chatName);
     }
 

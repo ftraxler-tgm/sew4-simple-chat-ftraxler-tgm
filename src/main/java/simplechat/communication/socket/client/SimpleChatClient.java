@@ -190,6 +190,7 @@ public class SimpleChatClient extends Thread {
 
                 SimpleChat.clientLogger.log(INFO,"Shutdown Socket");
                 try {
+
                     out.close();
                 }
 

@@ -42,6 +42,9 @@ public class Controller {
     @FXML
     protected void handleRemoveButtonAction(ActionEvent event) {
         event.consume();
+        String name = (String)listView.getSelectionModel().getSelectedItem();
+        SimpleChat.serverLogger.log(Level.INFO,"Removing... :"+name);
+        this.simpleChat.shutdownClient(name);
 
 
     }

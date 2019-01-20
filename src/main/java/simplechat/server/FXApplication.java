@@ -4,7 +4,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.application.Platform;
+
+import static javafx.scene.control.Alert.AlertType.ERROR;
 
 public class FXApplication extends Application {
 
@@ -34,6 +38,17 @@ public class FXApplication extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        if(!simpleChat.isConnected()) {
+            Alert alert = new Alert(ERROR);
+
+            alert.setTitle("Communication error");
+            alert.setHeaderText("Server can not open the socket");
+            alert.setContentText("Please check the parameters and try it again.");
+
+            alert.showAndWait();
+            Platform.exit();
+        }
     }
 
     public void setSimpleChat(SimpleChat simpleChat) {

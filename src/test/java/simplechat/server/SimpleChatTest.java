@@ -11,6 +11,7 @@ public class SimpleChatTest {
     @Before
     public void setUp() throws Exception {
         simpleChat = new SimpleChat(null, null);
+
     }
 
     @After
