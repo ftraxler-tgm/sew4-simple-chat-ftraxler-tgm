@@ -73,7 +73,7 @@ public class SimpleChatServer extends Thread {
                 workerList.put(c, this.server.addClient(""));
                 if(!this.executorService.isShutdown())
                     executorService.execute(c);
-                SimpleChat.serverLogger.log(INFO, "ClientWorker added");
+                SimpleChat.serverLogger.log(INFO, "ClientWorker added"+this.workerList.get(c));
 
             }
 
