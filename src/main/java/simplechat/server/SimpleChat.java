@@ -178,7 +178,7 @@ public class SimpleChat {
      * or an adapted new name (e.g. Franz#1)
      */
     public synchronized String addClient(String chatName) {
-        String name = chatName;
+        String name = chatName.equals("") ? "User#"+(users.size()+1) : chatName;
         users.add(chatName);
         this.controller.addUser(chatName);
         return name;

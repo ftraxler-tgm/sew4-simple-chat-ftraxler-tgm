@@ -51,7 +51,6 @@ public class Controller {
 
     public void initialize() {
         this.simpleChat = new SimpleChat("localhost",5050);
-        this.scheduledExecutorService.submit(clearText);
     }
 
     public void stop() {

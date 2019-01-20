@@ -39,7 +39,7 @@ public class Controller {
     }
 
     public void initialize() {
-        this.scheduledExecutorService.submit(clearText);
+
     }
 
     public void stop() {

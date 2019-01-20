@@ -52,11 +52,8 @@ public class SimpleChatClient extends Thread {
         if (port != null) this.port = port;
         SimpleChat.clientLogger.log(INFO, "Init: host=" + this.host + " port="
                 + this.port + " chatName=" + this.name);
-
-
-
-            this.client = client;
-            this.socketAddress = new InetSocketAddress(host,port);
+        this.client = client;
+        this.socketAddress = new InetSocketAddress(host,port);
 
 
 
@@ -105,7 +102,7 @@ public class SimpleChatClient extends Thread {
         } catch(Exception E) {
             SimpleChat.clientLogger.log(SEVERE,E.getMessage()+" SOCKET");
 
-            if (socket.isBound() && socket.isConnected()) {
+            if (socket.isConnected()&& socket.isBound()) {
                 this.shutdown();
             }
         }
