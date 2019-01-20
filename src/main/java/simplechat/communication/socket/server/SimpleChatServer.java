@@ -3,6 +3,7 @@ package simplechat.communication.socket.server;
 import com.sun.org.apache.bcel.internal.generic.IFNE;
 import simplechat.communication.MessageProtocol;
 import simplechat.server.SimpleChat;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import static java.util.logging.Level.*;
 import static simplechat.communication.MessageProtocol.Commands.EXIT;
@@ -96,63 +97,82 @@ public class SimpleChatServer extends Thread {
            SimpleChat.serverLogger.log(INFO,"Command has been send");
            String[] texts = plainMessage.substring(1).split(" ",3);
            SimpleChat.serverLogger.log(INFO,"Command: "+texts[0]);
-           MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
-           switch (cmd){
-               case EXIT:
-                   SimpleChat.serverLogger.log(INFO,"Client is shutdowned");
-                   this.removeClient(sender);
+           try{
+               MessageProtocol.Commands cmd = MessageProtocol.getCommand(texts[0]);
+               switch (cmd){
+                   case EXIT:
+                       SimpleChat.serverLogger.log(INFO,"Client is shutdowned");
+                       this.removeClient(sender);
 
-                   break;
-               case PRIVATE:
-                   SimpleChat.serverLogger.log(INFO,""+texts[2]);
-                   if(texts.length>2){
-                       if(plainMessage.contains("{")&&plainMessage.contains("}")){
-                                String usersnames = plainMessage.substring(plainMessage.indexOf("{"),plainMessage.indexOf("}"));
-                                String message = plainMessage.substring(plainMessage.indexOf("}"));
-                                usersnames = usersnames.replace(" ","");
-                                usersnames = usersnames.replace("{","");
-                                String[] names =usersnames.split(",",10);
-                                message= message.substring(2);
-                                SimpleChat.serverLogger.log(INFO,"User1: "+names[0]);
-                                SimpleChat.serverLogger.log(INFO,"User1: "+names[1]);
+                       break;
+                   case PRIVATE:
+                       SimpleChat.serverLogger.log(INFO,""+texts[2]);
+                       if(texts.length>2){
+                           if(plainMessage.contains("{")&&plainMessage.contains("}")){
 
-                                SimpleChat.serverLogger.log(INFO,""+message);
-                                plainMessage = MessageProtocol.privateMessage(message,this.workerList.get(sender));
-                                sender.send(plainMessage);
-                               for (ClientWorker o : workerList.keySet()){
+                               String usersnames = plainMessage.substring(plainMessage.indexOf("{"),plainMessage.indexOf("}"));
+                               String message = plainMessage.substring((plainMessage.indexOf("}")+1));
+                               SimpleChat.serverLogger.log(INFO, "" + message);
+                               plainMessage = MessageProtocol.privateMessage(message, this.workerList.get(sender));
+                               //plainMessage = plainMessage.substring(2);
+                               if(usersnames.contains(",")) {
+                                   SimpleChat.serverLogger.log(INFO,"Private Message to more users");
 
-                                   for(int i=0;i<names.length;i++) {
-                                       if (this.workerList.get(o).equals(names[i])) {
-                                           o.send(plainMessage);
+                                   usersnames = usersnames.replace(" ", "");
+                                   usersnames = usersnames.replace("{", "");
+                                   String[] names = usersnames.split(",", 10);
 
+                                   SimpleChat.serverLogger.log(INFO, "User1: " + names[0]);
+                                   SimpleChat.serverLogger.log(INFO, "User1: " + names[1]);
+
+
+                                   sender.send(plainMessage);
+                                   for (ClientWorker o : workerList.keySet()) {
+
+                                       for (int i = 0; i < names.length; i++) {
+                                           if (this.workerList.get(o).equals(names[i])) {
+                                               o.send(plainMessage);
+
+                                           }
                                        }
                                    }
-                               }
-                       }else {
-                           for (ClientWorker o : workerList.keySet()){
-                               if(this.workerList.get(o).equals(texts[1])){
-                                   plainMessage = MessageProtocol.privateMessage(texts[2],this.workerList.get(sender));
-                                   o.send(plainMessage);
+                               }else{
+                                   SimpleChat.serverLogger.log(INFO,"Private Message for one user");
+                                   usersnames= usersnames.replace("{","");
+                                   usersnames = usersnames.replace("{","");
                                    sender.send(plainMessage);
+                                   for(ClientWorker o: workerList.keySet()){
+                                       if(this.workerList.get(o).equals(usersnames)){
+                                           o.send(plainMessage);
+                                       }
+                                   }
+
                                }
+
+
                            }
+
+
+                       }else {
+                           sender.send("Enter amother Chatname");
                        }
-
-
-                   }else {
-                       sender.send("Enter amother Chatname");
-                   }
-                   break;
-               case CHATNAME:
-                   SimpleChat.serverLogger.log(INFO,"Changing Name...");
-                   if(texts.length>1) {
-                       this.setName(texts[1], sender);
-                       sender.send("Your new chatname is "+this.workerList.get(sender));
-                   }else {
-                       sender.send("Enter a Chatname");
-                   }
-                   break;
+                       break;
+                   case CHATNAME:
+                       SimpleChat.serverLogger.log(INFO,"Changing Name...");
+                       if(texts.length>1) {
+                           this.setName(texts[1], sender);
+                           sender.send("Your new chatname is "+this.workerList.get(sender));
+                       }else {
+                           sender.send("Enter a Chatname");
+                       }
+                       break;
+               }
+           }catch (IllegalArgumentException e){
+               SimpleChat.serverLogger.log(WARNING,"Wrong Commang");
+               sender.send("Command doesn't exist");
            }
+
+
 
 
        }else {
@@ -320,7 +340,7 @@ class ClientWorker implements Runnable {
                 if((message = in.readLine() )!= null)
                     callback.received(message,this);
             } catch (IOException e) {
-                e.printStackTrace();
+                SimpleChat.serverLogger.log(SEVERE,e.getMessage());
             }
         }
     }
