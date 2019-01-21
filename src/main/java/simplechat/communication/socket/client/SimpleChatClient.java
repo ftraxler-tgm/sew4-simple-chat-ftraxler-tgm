@@ -97,11 +97,7 @@ public class SimpleChatClient extends Thread {
             }
         } catch(Exception E) {
             SimpleChat.clientLogger.log(SEVERE,E.getMessage()+" SOCKET");
-            this.listening=false;
 
-            if (socket.isConnected()&& socket.isBound()) {
-                this.shutdown();
-            }
         }
     }
 

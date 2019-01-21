@@ -14,6 +14,7 @@ import static java.util.logging.Level.*;
  *
  * @author Kai Hoeher {@literal <khoeher@tgm.ac.at>}
  * @author Michael Borko {@literal <mborko@tgm.ac.at>}
+ * @author Fabian Traxler {@literal <ftraxler@student.tgm.ac.at>}
  * @version 1.0
  */
 public class SimpleChat {
@@ -120,7 +121,8 @@ public class SimpleChat {
      * @return checks if client Thread is still alive
      */
     public boolean isConnected() {
-        return client.isAlive();
+        SimpleChat.clientLogger.log(INFO,"Thread-Status: "+this.client.isAlive());
+        return this.client.isAlive();
     }
 
     /**

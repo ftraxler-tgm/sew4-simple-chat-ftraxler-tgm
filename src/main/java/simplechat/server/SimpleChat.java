@@ -17,6 +17,7 @@ import static java.util.logging.Level.*;
  * The Server Class choosing the communication framework and user interface
  *
  * @author Michael Borko  {@literal <mborko@tgm.ac.at>}
+ * @author Fabian Traxler {@literal <ftraxler@student.tgm.ac.at>}
  * @version 1.0
  */
 public class SimpleChat {
