@@ -27,7 +27,8 @@
                text=""
                editable="true"
                GridPane.columnIndex="0"
-               GridPane.rowIndex="1"/>
+               GridPane.rowIndex="1"
+                onAction="#onEnter"/>
 
     <HBox spacing="10" alignment="bottom_right"
           GridPane.columnIndex="1" GridPane.rowIndex="1">

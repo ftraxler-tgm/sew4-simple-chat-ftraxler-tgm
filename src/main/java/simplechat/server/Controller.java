@@ -1,6 +1,8 @@
 package simplechat.server;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,7 +52,15 @@ public class Controller {
     }
 
     public void initialize() {
-        this.simpleChat = new SimpleChat("localhost",5050);
+
+        //Wenn sich etwas an der TextArea ändert, wird dieser ChangeListener aktiv
+        this.textArea.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                //Durch MAX_VALUE wird immer nach unten gescrollt, mit MIN_VALUE würde es nach oben scrollen.
+                textArea.setScrollTop(Double.MAX_VALUE);
+            }
+        });
     }
 
     public void stop() {
@@ -68,6 +78,7 @@ public class Controller {
         SimpleChat.serverLogger.log(Level.INFO,"Textarea:"+this.textArea.getText());
         SimpleChat.serverLogger.log(Level.INFO,"New Text:"+text);
         this.textArea.setText(this.textArea.getText()+"\n"+text);
+        this.textArea.appendText("");
     }
 
     public void addUser(String user) {
