@@ -33,8 +33,11 @@ public class FXApplication extends Application {
         simpleChat.setController(controller);
 
 
+
         Scene scene = new Scene(root, 300, 275);
 
+        stage.setMinHeight(500.0);
+        stage.setMinWidth(500.0);
         stage.setTitle("Simple Chat - Client");
 
         stage.setScene(scene);

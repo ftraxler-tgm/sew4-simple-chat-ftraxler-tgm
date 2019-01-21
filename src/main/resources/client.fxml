@@ -7,7 +7,7 @@
 
 
 <GridPane fx:controller="simplechat.client.Controller"
-          xmlns:fx="http://javafx.com/fxml" alignment="TOP_LEFT" hgap="10" vgap="10">
+          xmlns:fx="http://javafx.com/fxml" alignment="TOP_LEFT" hgap="10" vgap="10" minHeight="800" minWidth="600">
 
     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
 
@@ -21,20 +21,23 @@
               editable="false"
               GridPane.columnIndex="0"
               GridPane.rowIndex="0"
-              GridPane.columnSpan="2"/>
-
+              GridPane.columnSpan="1"/>
+    <GridPane alignment="BOTTOM_LEFT" GridPane.rowIndex="1" hgap="10" vgap="10">
     <TextField fx:id="textField"
                text=""
                editable="true"
+               GridPane.hgrow="ALWAYS"
+               GridPane.vgrow="ALWAYS"
                GridPane.columnIndex="0"
                GridPane.rowIndex="1"
+               GridPane.columnSpan="1"
                 onAction="#onEnter"/>
-
     <HBox spacing="10" alignment="bottom_right"
           GridPane.columnIndex="1" GridPane.rowIndex="1">
         <Button text="Send"
                 onAction="#handleMessageButtonAction"/>
     </HBox>
+    </GridPane>
 
     <Text fx:id="actionTarget"
           GridPane.columnIndex="0" GridPane.rowIndex="3"/>
