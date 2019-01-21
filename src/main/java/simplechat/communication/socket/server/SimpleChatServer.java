@@ -353,6 +353,7 @@ class ClientWorker implements Runnable {
     void shutdown() {
         if(listening) {
             listening = false;
+            this.send("Tschussssss");
             this.send(MessageProtocol.getMessage(EXIT));
             SimpleChat.serverLogger.log(INFO, "Shutting down ClientWorker ... listening=" + listening);
         }
