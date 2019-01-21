@@ -161,7 +161,7 @@ public class SimpleChatServer extends Thread {
                        SimpleChat.serverLogger.log(INFO,"Changing Name...");
                        if(texts.length>1) {
                            this.setName(texts[1], sender);
-                           sender.send("Your new chatname is "+this.workerList.get(sender));
+
                        }else {
                            sender.send("Enter a Chatname");
                        }
@@ -353,7 +353,7 @@ class ClientWorker implements Runnable {
     void shutdown() {
         if(listening) {
             listening = false;
-            this.send("Tschussssss");
+            this.send(MessageProtocol.textMessage("Shuting down Server","SERVER Information"));
             this.send(MessageProtocol.getMessage(EXIT));
             SimpleChat.serverLogger.log(INFO, "Shutting down ClientWorker ... listening=" + listening);
         }

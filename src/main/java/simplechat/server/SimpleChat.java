@@ -48,7 +48,7 @@ public class SimpleChat {
         serverLogger.setLevel(FINE);
         serverLogger.setUseParentHandlers(false);
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(SEVERE);
+        ch.setLevel(ALL);
         serverLogger.addHandler(ch);
 
         CommandLineParser parser = new DefaultParser();
@@ -184,6 +184,9 @@ public class SimpleChat {
         users.add(name);
         if(this.controller!=null)
             this.controller.addUser(name);
+        String m = "Your new chatname is "+name;
+        this.sentMessages.add(m);
+        this.server.send(m);
         return name;
     }
 

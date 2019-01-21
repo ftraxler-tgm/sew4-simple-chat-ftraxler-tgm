@@ -24,9 +24,9 @@ import static java.util.logging.Level.*;
  */
 public class SimpleChatClient extends Thread {
 
-    private String name = null;
-    private String host = null;
-    private Integer port = null;
+    private String name = "";
+    private String host = "localhost";
+    private Integer port = 5050;
 
     private InetSocketAddress socketAddress;
     private Socket socket = null;
@@ -53,7 +53,7 @@ public class SimpleChatClient extends Thread {
         SimpleChat.clientLogger.log(INFO, "Init: host=" + this.host + " port="
                 + this.port + " chatName=" + this.name);
         this.client = client;
-        this.socketAddress = new InetSocketAddress(host,port);
+        this.socketAddress = new InetSocketAddress(this.host,this.port);
 
     }
 
@@ -87,7 +87,7 @@ public class SimpleChatClient extends Thread {
             listening = true;
 
             SimpleChat.clientLogger.log(INFO, "Name wird an Socket geschickt");
-            out.println(MessageProtocol.getMessage(CHATNAME)+" "+name);
+            out.println(MessageProtocol.getMessage(CHATNAME)+" "+this.name);
 
             while(listening){
                 if((currentMessage = in.readLine() )!= null) {
