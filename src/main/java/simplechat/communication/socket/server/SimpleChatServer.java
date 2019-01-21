@@ -274,9 +274,7 @@ public class SimpleChatServer extends Thread {
 
         SimpleChat.serverLogger.log(INFO, "All Clients have been shutdowned");
 
-
         try {
-            Thread.sleep(1000);
             if(!serverSocket.isClosed()){
                 Socket close = new Socket(host,port);
                 this.serverSocket.close();
@@ -365,23 +363,10 @@ class ClientWorker implements Runnable {
                 SimpleChat.serverLogger.log(INFO,"Shutdown Socket");
                 try {
                     out.close();
+                    in.close();
                 }
-
                 finally {
-                    try {
-                        in.close();
-                    }catch (IOException ioe){
-                        SimpleChat.serverLogger.log(SEVERE,ioe.getMessage());
-                    }
-
-                    finally {
-                        try {
-                            client.close();
-                            SimpleChat.serverLogger.log(INFO,"Client Socket: "+client.isClosed());
-                        } catch (IOException e) {
-                            SimpleChat.serverLogger.log(SEVERE,e.getMessage());
-                        }
-                    }
+                    client.close();
                 }
             }
         }catch (Exception e){

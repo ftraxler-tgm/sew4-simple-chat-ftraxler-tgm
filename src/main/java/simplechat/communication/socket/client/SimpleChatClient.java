@@ -55,10 +55,6 @@ public class SimpleChatClient extends Thread {
         this.client = client;
         this.socketAddress = new InetSocketAddress(host,port);
 
-
-
-
-
     }
 
     /**

@@ -40,7 +40,7 @@ public class SimpleChat {
         clientLogger.setLevel(FINE);
         clientLogger.setUseParentHandlers(false);
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(ALL);
+        ch.setLevel(SEVERE);
         clientLogger.addHandler(ch);
 
         CommandLineParser parser = new DefaultParser();
@@ -51,10 +51,10 @@ public class SimpleChat {
         options.addOption("v", "verbose", false, "explain what is being done");
 
         CommandLine line = null;
-        String host = "localhost";
-        String chatName = "Client";
-        Integer port = 5050;
-       /** try {
+        String host = null;
+        String chatName = null;
+        Integer port = null;
+        try {
             line = parser.parse(options, args);
             host = line.getOptionValue("h");
             chatName = line.getOptionValue("n");
@@ -68,7 +68,7 @@ public class SimpleChat {
         } catch (ParseException e) {
             clientLogger.log(SEVERE, e.toString());
             System.exit(1);
-        }*/
+        }
         clientLogger.log(INFO, "Parameters set by user: " +
                 "host=" + host + " port=" + port + " chatName=" + chatName);
 
