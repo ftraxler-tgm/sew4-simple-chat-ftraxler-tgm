@@ -285,6 +285,7 @@ public class SimpleChatServer extends Thread {
         } catch (Exception e) {
                 SimpleChat.serverLogger.log(SEVERE, e.getMessage());
 
+
         }
         this.executorService.shutdownNow();
         SimpleChat.serverLogger.log(INFO, "Serversocket closed "+serverSocket.isClosed());

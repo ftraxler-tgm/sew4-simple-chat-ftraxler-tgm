@@ -14,6 +14,8 @@
 
     <TextArea fx:id="textArea"
             text="Welcome to Simple Chat!"
+              GridPane.hgrow="ALWAYS"
+              GridPane.vgrow="ALWAYS"
               prefHeight="800"
               prefWidth="1200"
               editable="false"

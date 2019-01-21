@@ -14,22 +14,32 @@
 
     <Text fx:id="chatText"
           text="Chat"
+          GridPane.hgrow="ALWAYS"
+          GridPane.vgrow="ALWAYS"
           GridPane.columnIndex="0" GridPane.rowIndex="0"/>
     <Text fx:id="clientText"
+          GridPane.hgrow="ALWAYS"
+          GridPane.vgrow="ALWAYS"
           text="Clients"
           GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
     <TextArea fx:id="textArea"
               text="Welcome to Simple Chat!"
+              GridPane.hgrow="ALWAYS"
+              GridPane.vgrow="ALWAYS"
               editable="false"
               GridPane.columnIndex="0"
               GridPane.rowIndex="1"
               GridPane.columnSpan="3"/>
 
     <ListView fx:id="listView"
+              GridPane.hgrow="ALWAYS"
+              GridPane.vgrow="ALWAYS"
               GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.columnSpan="1"/>
 
     <TextField fx:id="textField"
+               GridPane.hgrow="ALWAYS"
+               GridPane.vgrow="ALWAYS"
                text=""
                editable="true"
                GridPane.columnIndex="0"
