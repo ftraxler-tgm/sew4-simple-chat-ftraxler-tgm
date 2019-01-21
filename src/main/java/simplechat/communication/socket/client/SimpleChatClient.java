@@ -86,8 +86,8 @@ public class SimpleChatClient extends Thread {
 
             listening = true;
 
-            //SimpleChat.clientLogger.log(INFO, "Name wird an Socket geschickt");
-            //out.println(MessageProtocol.getMessage(CHATNAME)+" "+name);
+            SimpleChat.clientLogger.log(INFO, "Name wird an Socket geschickt");
+            out.println(MessageProtocol.getMessage(CHATNAME)+" "+name);
 
             while(listening){
                 if((currentMessage = in.readLine() )!= null) {
