@@ -44,11 +44,7 @@ public class MessageProtocol implements Serializable {
      * @throws IllegalArgumentException will be thrown if the String is not defined as Command
      */
     public static Commands getCommand(String command) {
-        if(command.startsWith("!")){
-            return Commands.valueOf(command.substring(1));
-        }
-        Commands c= Commands.valueOf(command);
-        return c;
+        return command.startsWith("!") ? Commands.valueOf(command.substring(1)) : Commands.valueOf(command);
     }
 
     /**

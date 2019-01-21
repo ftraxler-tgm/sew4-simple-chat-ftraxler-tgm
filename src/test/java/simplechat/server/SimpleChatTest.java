@@ -30,12 +30,10 @@ public class SimpleChatTest {
         simpleChat.addClient("");
         simpleChat.addClient("");
         simpleChat.addClient("Franz");
-        simpleChat.addClient("Franz");
         assertEquals(simpleChat.getClients()[0], "Client");
         assertEquals(simpleChat.getClients()[1], "Client#1");
         assertEquals(simpleChat.getClients()[2], "Client#2");
         assertEquals(simpleChat.getClients()[3], "Franz");
-        assertEquals(simpleChat.getClients()[4], "Franz#1");
     }
 
     @Test
