@@ -70,6 +70,7 @@ public class Controller {
     }
 
     public void updateTextAreaWithText(String text) {
+        SimpleChat.clientLogger.log(INFO,"Adding Message "+text);
         this.textArea.setText(this.textArea.getText()+"\n"+text);
         this.textArea.appendText("");
     }
