@@ -1,4 +1,4 @@
-package simplechat.server;
+package GUI;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,7 +50,6 @@ public class FXApplicationMockTest extends ApplicationTest {
 
     @Before
     public void setUp() throws Exception {
-
     }
 
 
