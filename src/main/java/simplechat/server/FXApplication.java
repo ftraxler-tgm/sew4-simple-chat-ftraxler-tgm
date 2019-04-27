@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
+
 import static javafx.scene.control.Alert.AlertType.ERROR;
 
 public class FXApplication extends Application {
